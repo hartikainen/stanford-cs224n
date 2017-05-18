@@ -29,21 +29,10 @@ def softmax(x):
     """
     orig_shape = x.shape
 
-    if len(x.shape) > 1:
-        # Matrix
-        ### YOUR CODE HERE
-        c = np.max(x, axis=1, keepdims=True)
-        exps = np.exp(x - c)
-        sums = np.sum(exps, axis=1, keepdims=True)
-        x = exps / sums
-        ### END YOUR CODE
-    else:
-        # Vector
-        ### YOUR CODE HERE
-        c = np.max(x)
-        exps = np.exp(x - c)
-        x = exps / np.sum(exps)
-        ### END YOUR CODE
+    c = np.max(x, axis=-1, keepdims=True)
+    exps = np.exp(x - c)
+    sums = np.sum(exps, axis=-1, keepdims=True)
+    x = exps / sums
 
     assert x.shape == orig_shape
     return x
