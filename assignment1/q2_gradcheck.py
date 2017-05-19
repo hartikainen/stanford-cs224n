@@ -3,6 +3,8 @@
 import numpy as np
 import random
 
+from q2_sigmoid import sigmoid, sigmoid_grad
+
 
 # First implement a gradient checker by filling in the following functions
 def gradcheck_naive(f, x):
@@ -30,7 +32,11 @@ def gradcheck_naive(f, x):
         # to test cost functions with built in randomness later.
 
         ### YOUR CODE HERE:
-        raise NotImplementedError
+        random.setstate(rndstate)
+        fxph, _ = f(x[ix] + h)
+        random.setstate(rndstate)
+        fxmh, _ = f(x[ix] - h)
+        numgrad = (fxph - fxmh) / (2*h)
         ### END YOUR CODE
 
         # Compare gradients
@@ -60,6 +66,19 @@ def sanity_check():
     print ""
 
 
+TEST_CASES = [
+  {
+    # sigmoid
+    "fn": lambda x: (sigmoid(x), sigmoid_grad(sigmoid(x))),
+    "input": np.random.rand(5,5)
+  },
+  {
+    # relu
+    "fn": lambda x: (np.max(x, 0), (x > 0).astype(int)),
+    "input": np.random.rand(5,5)
+  }
+]
+
 def your_sanity_checks():
     """
     Use this space add any additional sanity checks by running:
@@ -69,7 +88,10 @@ def your_sanity_checks():
     """
     print "Running your sanity checks..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    for test_case in TEST_CASES:
+      test_fn = test_case["fn"]
+      test_input = test_case["input"]
+      gradcheck_naive(test_fn, test_input)
     ### END YOUR CODE
 
 
