@@ -31,8 +31,8 @@ def softmax(x):
 
     c = np.max(x, axis=-1, keepdims=True)
     exps = np.exp(x - c)
-    sums = np.sum(exps, axis=-1, keepdims=True)
-    x = exps / sums
+    sum_exps = np.sum(exps, axis=-1, keepdims=True)
+    x = exps / sum_exps
 
     assert x.shape == orig_shape
     return x
