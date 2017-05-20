@@ -32,18 +32,18 @@ def gradcheck_naive(f, x):
         # to test cost functions with built in randomness later.
 
         ### YOUR CODE HERE:
-        tmp = x[ix]
+        xix = x[ix]
 
         random.setstate(rndstate)
-        x[ix] += h
+        x[ix] = xix + h
         fxph, _ = f(x)
-        x[ix] = tmp
+        x[ix] = xix
 
 
         random.setstate(rndstate)
-        x[ix] -= h
+        x[ix] = xix - h
         fxmh, _ = f(x)
-        x[ix] = tmp
+        x[ix] = xix
 
         numgrad = (fxph - fxmh) / (2*h)
         ### END YOUR CODE
@@ -78,13 +78,13 @@ def sanity_check():
 TEST_CASES = [
   {
     # sigmoid
-    "fn": lambda x: (sigmoid(x), sigmoid_grad(sigmoid(x))),
-    "input": np.random.rand(5,5)
+    "fn": lambda x: (np.sum(sigmoid(x)), sigmoid_grad(sigmoid(x))),
+    "input": np.random.rand(5,5) - 0.5
   },
   {
     # relu
-    "fn": lambda x: (np.max(x, 0), (x > 0).astype(int)),
-    "input": np.random.rand(5,5)
+    "fn": lambda x: (np.sum(np.maximum(x, 0)), (x > 0).astype(int)),
+    "input": np.random.rand(5,5) - 0.5
   }
 ]
 

@@ -116,7 +116,7 @@ def test_softmax():
     """
     print "Running your tests..."
     ### YOUR CODE HERE
-    for test_case in TEST_CASES:
+    for i, test_case in enumerate(TEST_CASES):
       test_input = test_case["input"]
       test_output = softmax(test_input)
       expected_output = test_case["expected"]
@@ -124,6 +124,7 @@ def test_softmax():
         test_output, expected_output,
         rtol=1e-07, atol=1e-06
       )
+      print("Test {} passed".format(i))
     ### END YOUR CODE
 
 

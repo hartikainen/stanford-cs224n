@@ -128,7 +128,7 @@ def test_sigmoid():
     """
     print "Running your tests..."
     ### YOUR CODE HERE
-    for test_case in TEST_CASES:
+    for i, test_case in enumerate(TEST_CASES):
       test_input = test_case["input"]
       test_fn = test_case["fn"]
       test_output = test_fn(test_input)
@@ -137,6 +137,7 @@ def test_sigmoid():
         test_output, expected_output,
         rtol=1e-07, atol=1e-06
       )
+      print("Test {} passed".format(i))
     ### END YOUR CODE
 
 
