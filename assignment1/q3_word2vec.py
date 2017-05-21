@@ -59,7 +59,15 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
     """
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    scores = np.dot(outputVectors, predicted)
+    probs = softmax(scores)
+    cost = - np.log(probs[target])
+
+    dcost = probs.copy()
+    dcost[target] -= 1.0
+
+    grad = np.outer(dcost, predicted)
+    gradPred = np.dot(dcost, outputVectors)
     ### END YOUR CODE
 
     return cost, gradPred, grad
@@ -132,7 +140,19 @@ def skipgram(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     gradOut = np.zeros(outputVectors.shape)
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    c = tokens[currentWord]
+    vc = inputVectors[c]
+
+    for word in contextWords:
+        o = tokens[word]
+        uo = outputVectors[o]
+        cost_, gradPred, grad = word2vecCostAndGradient(vc,
+                                                        o,
+                                                        outputVectors,
+                                                        dataset)
+        cost += cost_
+        gradIn[c] += gradPred
+        gradOut += grad
     ### END YOUR CODE
 
     return cost, gradIn, gradOut
