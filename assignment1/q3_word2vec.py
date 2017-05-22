@@ -60,8 +60,8 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
 
     ### YOUR CODE HERE
     scores = np.dot(outputVectors, predicted)
-    probs = softmax(scores)
-    cost = - np.log(probs[target])
+    probs = softmax(scores) # probs[o] = p(o|c)
+    cost = - np.log(probs[target]) # - y*log(y_hat)
 
     dcost = probs.copy()
     dcost[target] -= 1.0
@@ -104,8 +104,28 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
     indices = [target]
     indices.extend(getNegativeSamples(target, dataset, K))
 
+
     ### YOUR CODE HERE
-    raise NotImplementedError
+    grad = np.zeros_like(outputVectors)
+
+    uo = outputVectors[target]
+    uK = outputVectors[indices[1:]]
+    cost = - (
+        np.log(sigmoid(np.dot(uo, predicted)))
+        + np.sum( np.log(sigmoid(np.dot(-uK, predicted))) )
+    )
+
+    for k in indices:
+        if k == target:
+            grad[k] = (sigmoid(np.dot(outputVectors[k], predicted)) - 1.0) * predicted
+        else:
+            grad[k] += (sigmoid(np.dot(outputVectors[k], predicted))) * predicted
+
+
+    gradPred = (
+        (sigmoid(np.dot(uo, predicted)) - 1.0) * uo
+        + np.dot(sigmoid(np.dot(uK, predicted)), uK)
+    )
     ### END YOUR CODE
 
     return cost, gradPred, grad
