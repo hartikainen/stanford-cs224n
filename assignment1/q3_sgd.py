@@ -79,26 +79,26 @@ def sgd(f, x0, step, iterations, postprocessing=None, useSaved=False,
 
     expcost = None
 
-    for iter in xrange(start_iter + 1, iterations + 1):
+    for it in xrange(start_iter + 1, iterations + 1):
         # Don't forget to apply the postprocessing after every iteration!
         # You might want to print the progress every few iterations.
 
-        cost = None
         ### YOUR CODE HERE
-        raise NotImplementedError
+        cost, grad = f(x)
+        x -= step * grad
         ### END YOUR CODE
 
-        if iter % PRINT_EVERY == 0:
+        if it % PRINT_EVERY == 0:
             if not expcost:
                 expcost = cost
             else:
                 expcost = .95 * expcost + .05 * cost
-            print "iter %d: %f" % (iter, expcost)
+            print "iteration %d: %f" % (it, expcost)
 
-        if iter % SAVE_PARAMS_EVERY == 0 and useSaved:
-            save_params(iter, x)
+        if it % SAVE_PARAMS_EVERY == 0 and useSaved:
+            save_params(it, x)
 
-        if iter % ANNEAL_EVERY == 0:
+        if it % ANNEAL_EVERY == 0:
             step *= 0.5
 
     return x
@@ -123,6 +123,16 @@ def sanity_check():
     print ""
 
 
+TEST_CASES = [
+    {
+        "f": lambda x: (np.sum(np.maximum(x, 0)), int(x > 0)),
+        "x0": 50.0,
+        "step": 0.1,
+        "iterations": 1000,
+        "PRINT_EVERY": 100
+    }
+]
+
 def your_sanity_checks():
     """
     Use this space add any additional sanity checks by running:
@@ -132,7 +142,9 @@ def your_sanity_checks():
     """
     print "Running your sanity checks..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    for i, test_case in enumerate(TEST_CASES):
+        t = sgd(**test_case)
+        assert(abs(t) <= 1e-6)
     ### END YOUR CODE
 
 
