@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
+\usepackage{mathtools}
 
 \addtolength{\evensidemargin}{-.5in}
 \addtolength{\oddsidemargin}{-.5in}
@@ -22,7 +23,7 @@
 Softmax is invariant to constant offsets in the input:
 
 \begin{equation*}
-  \label{eq:1}
+  \label{eq:softmax-constant-invariant}
   \begin{split}
     softmax(x)_{i} &= \frac{ e^{ x_{i} }       }{ \sum_{j}{ e^{ x_{j} }} }
                     = \frac{ e^{ x_{i} }       }{ \sum_{j}{ e^{ x_{j} }}} \frac{e^{c}}{{e^{c}}} \\
@@ -36,7 +37,7 @@ Softmax is invariant to constant offsets in the input:
 \section{Neural Network Basics}
 \subsection*{(a)}
 \begin{equation*}
-  \label{eq:2}
+  \label{eq:sigmoid-gradient}
   \begin{split}
     \frac{ \partial }{ \partial x } \sigma(x)
       &= \frac{ \partial }{ \partial x } \frac{ 1 }{ 1 + e^{-x} } \\
@@ -51,6 +52,29 @@ Softmax is invariant to constant offsets in the input:
 \end{equation*}
 
 \subsection*{(b)}
+Let $\hat{y} = softmax(\theta)$ and $CE(y, \hat{y}) = -\sum_{i}{y log(\hat{y})}$. Then,
+
+\begin{align*}
+    \frac{ \partial }{ \partial \theta_{k} } CE(y, \hat{y})
+      &= \frac{ \partial }{ \partial \theta_{k} } -\sum_{i}{y_i log(\hat{y}_i)} \\
+      &= -\sum_{i}{y_i \frac{ \partial }{ \partial \theta_{k} } log(\hat{y}_i)} \\
+      &= -\sum_{i}{y_i \frac{ \partial }{ \partial \theta_{k} } log(\frac{e^{\theta_i}}{\sum_{j}{e^{\theta_j}}})} \\
+      &= -\sum_{i}{y_i \frac{ \partial }{ \partial \theta_{k} } (log(e^{\theta_i}) - log(\sum_{j}{e^{\theta_j}}))} \\
+      &= -\sum_{i}{y_i \frac{ \partial }{ \partial \theta_{k} } (\theta_i - log(\sum_{j}{e^{\theta_j}}))} \\
+      &= -\sum_{i}{y_i (\frac{ \partial \theta_{i} }{ \partial \theta_{k} } - \frac{ \partial }{ \partial \theta_{k} }log(\sum_{j}{e^{\theta_j}}) )} \\
+      &= -\sum_{i}{y_i (\mathbf{1}_{i=k} - \frac{1}{\sum_{j}{e^{\theta_j}}} \sum_{j}{\frac{ \partial }{ \partial \theta_{k} } e^{\theta_j}} )} \\
+      &= -\sum_{i}{y_i (\mathbf{1}_{i=k} - \frac{ e^{\theta_k} }{\sum_{j}{e^{\theta_j}}} )} \\
+      &= -\sum_{i}{y_i (\mathbf{1}_{i=k} - \hat{y}_k )} \\
+      &= -y_k(1 - \hat{y}_k) + \sum_{i \neq k}{y_{i}\hat{y}_{k}} \\
+      &= -y_k + y_k\hat{y}_k + \sum_{i \neq k}{y_{i}\hat{y}_{k}} \\
+      &= -y_k + \sum_{i}{y_{i}\hat{y}_{k}} && \sum_{i}y_{i} = 1\\
+      &= \hat{y}_{k} - y_k
+\end{align*}
+
+Thus,
+\begin{align*}
+      \frac{ \partial }{ \partial \theta } CE(y, \hat{y}) = \hat{y} - y
+\end{align*}
 
 
 \subsection*{(c)}
@@ -79,7 +103,7 @@ Given the output $\hat{y}$, the cross-entropy loss for the network is defined as
 \begin{equation*}
   \label{eq:CE-loss}
   \begin{split}
-    J(\theta) = CE(y, \hat{y}) = - \sum_{i} y_{i} log(\hat{y_{i}})
+    J(\theta) = CE(y, \hat{y}) = - \sum_{i} y_{i} log(\hat{y}_{i})
   \end{split}
 \end{equation*}
 
