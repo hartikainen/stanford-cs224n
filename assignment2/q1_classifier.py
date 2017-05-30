@@ -82,15 +82,15 @@ class SoftmaxModel(Model):
         return feed_dict
 
     def add_prediction_op(self):
-        """Adds the core transformation for this model which transforms a batch of input
-        data into a batch of predictions. In this case, the transformation is a linear layer plus a
-        softmax transformation:
+        """Adds the core transformation for this model which transforms a batch
+        of input data into a batch of predictions. In this case, the
+        transformation is a linear layer plus a softmax transformation:
 
         y = softmax(Wx + b)
 
         Hint: Make sure to create tf.Variables as needed.
-        Hint: For this simple use-case, it's sufficient to initialize both weights W
-                    and biases b with zeros.
+        Hint: For this simple use-case, it's sufficient to initialize both
+              weights W and biases b with zeros.
 
         Args:
             input_data: A tensor of shape (batch_size, n_features).
@@ -104,8 +104,8 @@ class SoftmaxModel(Model):
     def add_loss_op(self, pred):
         """Adds cross_entropy_loss ops to the computational graph.
 
-        Hint: Use the cross_entropy_loss function we defined. This should be a very
-                    short function.
+        Hint: Use the cross_entropy_loss function we defined. This should be a
+              very short function.
         Args:
             pred: A tensor of shape (batch_size, n_classes)
         Returns:
@@ -118,9 +118,9 @@ class SoftmaxModel(Model):
     def add_training_op(self, loss):
         """Sets up the training Ops.
 
-        Creates an optimizer and applies the gradients to all trainable variables.
-        The Op returned by this function is what must be passed to the
-        `sess.run()` call to cause the model to train. See
+        Creates an optimizer and applies the gradients to all trainable
+        variables. The Op returned by this function is what must be passed to
+        the `sess.run()` call to cause the model to train. See
 
         https://www.tensorflow.org/versions/r0.7/api_docs/python/train.html#Optimizer
 
@@ -149,7 +149,8 @@ class SoftmaxModel(Model):
             average_loss: scalar. Average minibatch loss of model on epoch.
         """
         n_minibatches, total_loss = 0, 0
-        for input_batch, labels_batch in get_minibatches([inputs, labels], self.config.batch_size):
+        minibatches = get_minibatches([inputs, labels], self.config.batch_size)
+        for input_batch, labels_batch in minibatches:
             n_minibatches += 1
             total_loss += self.train_on_batch(sess, input_batch, labels_batch)
         return total_loss / n_minibatches
@@ -169,7 +170,9 @@ class SoftmaxModel(Model):
             start_time = time.time()
             average_loss = self.run_epoch(sess, inputs, labels)
             duration = time.time() - start_time
-            print 'Epoch {:}: loss = {:.2f} ({:.3f} sec)'.format(epoch, average_loss, duration)
+            print 'Epoch {:}: loss = {:.2f} ({:.3f} sec)'.format(epoch,
+                                                                 average_loss,
+                                                                 duration)
             losses.append(average_loss)
         return losses
 
