@@ -23,11 +23,14 @@
 \section{Tensorflow Softmax}
 \subsection*{(c)}
 \textbf{Question:} Carefully study the Model class in model.py. Briefly explain the purpose
-of placeholder variables and feed dictionaries in TensorFlow computations. Fill in the implementations for add placeholders and create feed dict in q1 classifier.py.
-
-Hint: Note that configuration variables are stored in the Config class. You will need to use these configuration variables in the code.
+of placeholder variables and feed dictionaries in TensorFlow computations.
 
 \textbf{Answer:} The placeholder variables in TensorFlow are used to present variables in computation graph that expect raw data to be fed in them when the computation graph is evaluated. Feed dictionaries are used to pass these raw data to the computation graph at the time of evaluation.
+
+\subsection*{(e)}
+\textbf{Question:} Explain how TensorFlow’s automatic differentiation removes the need for us to define gradients explicitly.
+
+\textbf{Answer:} Each TensorFlow operator defines methods needed to compute the gradient with respect to that operators using chain rule. One method calculates the forward pass through that operator and saves the values needed in the backward pass in cache. The backward pass method uses the cache to propagate the gradients through the operator using the gradient from the downstream operator.
 
 \section{Neural Transition-Based Dependency Parsing}
 \subsection*{(a)}

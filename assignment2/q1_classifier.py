@@ -3,8 +3,7 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from q1_softmax import softmax
-from q1_softmax import cross_entropy_loss
+from q1_softmax import softmax, cross_entropy_loss
 from model import Model
 from utils.general_utils import get_minibatches
 
@@ -36,20 +35,22 @@ class SoftmaxModel(Model):
         Adds following nodes to the computational graph
 
         input_placeholder: Input placeholder tensor of shape
-                                              (batch_size, n_features), type tf.float32
+                           (batch_size, n_features), type tf.float32
         labels_placeholder: Labels placeholder tensor of shape
-                                              (batch_size, n_classes), type tf.int32
+                            (batch_size, n_classes), type tf.int32
 
         Add these placeholders to self as the instance variables
             self.input_placeholder
             self.labels_placeholder
         """
         ### YOUR CODE HERE
-        X = tf.placeholder(tf.float32, shape=(None, n_features))
-        y = tf.placeholder(tf.int32, shape=(None, n_classes))
+        n_features = self.config.n_features
+        n_classes = self.config.n_classes
 
-        self.input_placeholder = X
-        self.labels_placeholder = y
+        self.input_placeholder = tf.placeholder(tf.float32,
+                                                shape=(None, n_features))
+        self.labels_placeholder = tf.placeholder(tf.int32,
+                                                 shape=(None, n_classes))
         ### END YOUR CODE
 
     def create_feed_dict(self, inputs_batch, labels_batch=None):
@@ -98,7 +99,16 @@ class SoftmaxModel(Model):
             pred: A tensor of shape (batch_size, n_classes)
         """
         ### YOUR CODE HERE
+        n_features = self.config.n_features
+        n_classes = self.config.n_classes
+
+        W = tf.Variable(tf.zeros([n_features, n_classes]))
+        b = tf.Variable(tf.zeros([n_classes]))
+
+        z = tf.add(tf.matmul(self.input_placeholder, W), b)
+        pred = softmax(z)
         ### END YOUR CODE
+
         return pred
 
     def add_loss_op(self, pred):
@@ -112,6 +122,7 @@ class SoftmaxModel(Model):
             loss: A 0-d tensor (scalar)
         """
         ### YOUR CODE HERE
+        loss = cross_entropy_loss(self.labels_placeholder, pred)
         ### END YOUR CODE
         return loss
 
@@ -135,6 +146,8 @@ class SoftmaxModel(Model):
             train_op: The Op for training.
         """
         ### YOUR CODE HERE
+        optimizer = tf.train.GradientDescentOptimizer(self.config.lr)
+        train_op = optimizer.minimize(loss)
         ### END YOUR CODE
         return train_op
 
