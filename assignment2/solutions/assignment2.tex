@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{mathtools}
+
+\setlength{\parindent}{0pt}
+
+\addtolength{\evensidemargin}{-.5in}
+\addtolength{\oddsidemargin}{-.5in}
+\addtolength{\textwidth}{0.8in}
+\addtolength{\textheight}{0.8in}
+
+\title{ CS 224n: Assignment \#2 }
+\author{Kristian Hartikainen}
+\date{\today}
+\pagestyle{myheadings}
+
+\newcommand{\R}{\mathbb{R}}
+
+\begin{document}
+\maketitle
+
+\section{Tensorflow Softmax}
+\subsection*{(c)}
+\textbf{Question:} Carefully study the Model class in model.py. Briefly explain the purpose
+of placeholder variables and feed dictionaries in TensorFlow computations. Fill in the implementations for add placeholders and create feed dict in q1 classifier.py.
+
+Hint: Note that configuration variables are stored in the Config class. You will need to use these configuration variables in the code.
+
+\textbf{Answer:} The placeholder variables in TensorFlow are used to present variables in computation graph that expect raw data to be fed in them when the computation graph is evaluated. Feed dictionaries are used to pass these raw data to the computation graph at the time of evaluation.
+
+\section{Neural Transition-Based Dependency Parsing}
+\subsection*{(a)}
+
+\section{Recurrent Neural Networks: Language Modeling}
+\subsection*{(a)}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
