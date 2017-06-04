@@ -61,7 +61,7 @@ of placeholder variables and feed dictionaries in TensorFlow computations.
 
 \textbf{Question:} A sentence containing n words will be parsed in how many steps (in terms of n)? Briefly explain why.
 
-\textbf{Answer:} During parsing, each word moves at some point (once) from buffer to stack, and is eventually (once) removed from the stack. Thus, for n words, we need n \verb|SHIFT|s and n+1 \verb|ARC|s (+1 for ROOT). On each move, we either \verb|SHIFT| or \verb|ARC| $\to 2n+1 \in \mathcal{O}(n)$ steps needed.
+\textbf{Answer:} During parsing, each word moves at some point (once) from buffer to stack, and is eventually (once) removed from the stack. Thus, for n words, we need n \verb|SHIFT|s and n \verb|ARC|s. On each move, we either \verb|SHIFT| or \verb|ARC| $\to$ 2n steps needed.
 
 \section{Recurrent Neural Networks: Language Modeling}
 \subsection*{(a)}
