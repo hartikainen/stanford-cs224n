@@ -2,6 +2,7 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{mathtools}
+\usepackage{float}
 
 \setlength{\parindent}{0pt}
 
@@ -34,6 +35,33 @@ of placeholder variables and feed dictionaries in TensorFlow computations.
 
 \section{Neural Transition-Based Dependency Parsing}
 \subsection*{(a)}
+\textbf{Question:} Go through the sequence of transitions needed for parsing the sentence “I parsed this sentence correctly”.
+
+\textbf{Answer:}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{p{\linewidth/3}|p{\linewidth/3}|p{\linewidth/6}|p{\linewidth/6}}
+    stack  & buffer & new dependency & transition\\
+    \hline
+    [ROOT]                         & [I, parsed, this, sentence, correctly] &                         & Initial Configuration \\\relax
+    [ROOT, I]                      & [parsed, this, sentence, correctly]    &                         & \verb|SHIFT| \\\relax
+    [ROOT, I, parsed]              & [this, sentence, correctly]            &                         & \verb|SHIFT| \\\relax
+    [ROOT, parsed]                 & [this, sentence, correctly]            & parsed $\to$ I          & \verb|LEFT-ARC| \\\relax
+    [ROOT, parsed, this]           & [sentence, correctly]                  &                         & \verb|SHIFT| \\\relax
+    [ROOT, parsed, this, sentence] & [correctly]                            &                         & \verb|SHIFT| \\\relax
+    [ROOT, parsed, sentence]       & [correctly]                            & sentence $\to$ this     & \verb|LEFT-ARC| \\\relax
+    [ROOT, parsed]                 & [correctly]                            & parsed $\to$ sentence   & \verb|RIGHT-ARC| \\\relax
+    [ROOT, parsed, correctly]      & []                                     &                         & \verb|SHIFT| \\\relax
+    [ROOT, parsed]                 & []                                     & parsed $\to$ correctly  & \verb|RIGHT-ARC| \\\relax
+    [ROOT]                         & []                                     & ROOT $\to$ parsed       & \verb|RIGHT-ARC| \\\relax
+  \end{tabular}
+\end{table}
+
+\subsection*{(b)}
+
+\textbf{Question:} A sentence containing n words will be parsed in how many steps (in terms of n)? Briefly explain why.
+
+\textbf{Answer:} During parsing, each word moves at some point (once) from buffer to stack, and is eventually (once) removed from the stack. Thus, for n words, we need n \verb|SHIFT|s and n+1 \verb|ARC|s (+1 for ROOT). On each move, we either \verb|SHIFT| or \verb|ARC| $\to 2n+1 \in \mathcal{O}(n)$ steps needed.
 
 \section{Recurrent Neural Networks: Language Modeling}
 \subsection*{(a)}
