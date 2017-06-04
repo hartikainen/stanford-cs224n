@@ -63,6 +63,23 @@ of placeholder variables and feed dictionaries in TensorFlow computations.
 
 \textbf{Answer:} During parsing, each word moves at some point (once) from buffer to stack, and is eventually (once) removed from the stack. Thus, for n words, we need n \verb|SHIFT|s and n \verb|ARC|s. On each move, we either \verb|SHIFT| or \verb|ARC| $\to$ 2n steps needed.
 
+\subsection*{(f)}
+\textbf{Question:} We will regularize our network by applying Dropout. During training this randomly sets units in the hidden layer \textbf{h} to zero with probability $p_{drop}$ and then multiplies \textbf{h} by a constant $\gamma$ (dropping different units each minibatch). We can write this as \[\mathbf{h}_{drop} = \gamma \mathbf{d} \circ \mathbf{h}\] where $\mathbf{d} \in {\{0, 1\}}^{D_h}$ ($D_h$ is the size of \textbf{h}) is a mask vector where each entry is 0 with probability $p_{drop}$ and 1 with probability ($1 - p_{drop}$). $\gamma$ is chosen such that the value of $\mathbf{h}_{drop}$ in expectation equals h: \[E_{p_{drop}} [\mathbf{h}_{drop}]_i = \mathbf{h}_i\]
+for all $0 < i < Dh$. What must γ equal in terms of $p_{drop}$? Briefly justify your answer.
+
+\textbf{Answer:}
+\begin{equation*}
+  \begin{split}
+    E_{p_{drop}} [\mathbf{h}_{drop}]_i = \mathbf{h}_i   &= \mathbf{h}_i \\
+    E_{p_{drop}} [\gamma \mathbf{d} \circ \mathbf{h}]_i &= \mathbf{h}_i \\
+    E_{p_{drop}} [\mathbf{d}_i \mathbf{h}_i] \gamma \mathbf{h}_i &= \mathbf{h}_i  \\
+    \gamma &= \frac{ \mathbf{h}_i }{ E_{p_{drop}} [\mathbf{d}_i] \mathbf{h}_i }  \\
+    &= \frac{ 1 }{ E_{p_{drop}} [\mathbf{d}_i] } \\
+    &= \frac{ 1 }{ (0p_{drop} + 1(1-p_{drop})) } \\
+    &= \frac{ 1 }{ 1-p_{drop} }
+  \end{split}
+\end{equation*}
+
 \section{Recurrent Neural Networks: Language Modeling}
 \subsection*{(a)}
 
