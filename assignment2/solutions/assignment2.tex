@@ -2,6 +2,7 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{mathtools}
+\usepackage{bm}
 \usepackage{float}
 
 \setlength{\parindent}{0pt}
@@ -79,6 +80,38 @@ for all $0 < i < Dh$. What must γ equal in terms of $p_{drop}$? Briefly justify
     &= \frac{ 1 }{ 1-p_{drop} }
   \end{split}
 \end{equation*}
+
+\subsection*{(g)}
+\subsubsection*{(i)}
+
+\textbf{Question:} Adam uses a trick called momentum by keeping track of m, a rolling average of the gradients:
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{m} &\leftarrow \beta_1 \mathbf{m} + (1 - \beta_1) \nabla \bm{\theta} J_{minibatch}(\bm{\theta}) \\
+    \bm{\theta} &\leftarrow \bm{\theta} - \alpha \mathbf{m}
+  \end{split}
+\end{equation*}
+
+where β1 is a hyperparameter between 0 and 1 (often set to 0.9). Briefly explain (you don’t need
+to prove mathematically, just give an intuition) how using m stops the updates from varying as
+much. Why might this help with learning?
+
+\textbf{Answer:} Adam uses a momentum term $(\beta_1\bm{m})$, which, with typical learning rates like 0.9, results the updated \textbf{m} to consist mostly of the previous $\mathbf{m}_{prev}$, and allows only minor contribution from the gradient. This ``dampens'' the path of our gradient, resulting in more stable updates, and allowing us to use larger learning rates than with regular SGD.
+
+\subsubsection*{(ii)}
+\textbf{Question:} Adam also uses adaptive learning rates by keeping track of \textbf{v}, a rolling average of the magnitudes of the gradients:
+\begin{equation*}
+  \begin{split}
+    \mathbf{m} &\leftarrow \beta_1\mathbf{m} + (1 - \beta_1)\nabla_{\bm{\theta}} J_{minibatch}(\bm{\theta}) \\
+    \mathbf{v} &\leftarrow \beta_2 \mathbf{v} + (1 - \beta_2)(\nabla_{\bm{\theta}}J_{minibatch}(\bm{\theta}) \circ \nabla_{\bm{\theta}}J_{minibatch}(\bm{\theta})) \\
+    \bm{\theta} &\leftarrow \bm{\theta} - \alpha \circ \mathbf{m} / \sqrt{\mathbf{v}}
+  \end{split}
+\end{equation*}
+where $\circ$ and / denote elementwise multiplication and division (so $\mathbf{z} \circ \mathbf{z}$ is elementwise squaring) and $\beta_2$ is a hyperparameter between 0 and 1 (often set to 0.99). Since Adam divides the update by $\sqrt{\mathbf{v}}$, which of the model parameters will get larger updates? Why might this help with learning?
+
+\textbf{Answer:}
+Adam divides each element of the parameters $\bm{\theta}$ in the update elementwise with \textbf{v} that is produced by elementwise squaring of the gradients with respect to the parameters. The larger the gradient is for parameter $\bm{\theta}_i$, the larger the divisor for it will be, meaning that Adam evens out the scale of the updates between flatter and steeper directions. This helps the updates to make progress on plateaus while and prevents overshooting in steep directions.
 
 \section{Recurrent Neural Networks: Language Modeling}
 \subsection*{(a)}
