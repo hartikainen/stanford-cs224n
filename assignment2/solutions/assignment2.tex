@@ -115,6 +115,40 @@ Adam divides each element of the parameters $\bm{\theta}$ in the update elementw
 
 \section{Recurrent Neural Networks: Language Modeling}
 \subsection*{(a)}
+\textbf{Question:}
+Our cross-entropy cost function is defined as:
+\begin{equation*}
+  \begin{split}
+    J^{(t)}(\theta) = CE(\mathbf{y^{(t)}}, \mathbf{\hat{y}^{(t)}}) = - \sum_{j=1}^{|V|}{ y_{j}^{(t)} log\hat{y}_{j}^{(t)} }
+  \end{split}
+\end{equation*}
+
+Perplexity is defined as:
+\begin{equation*}
+  \begin{split}
+    PP^{(t)}(\mathbf{y}^{(t)}, \mathbf{\hat{y}}^{(t)}) = \frac{ 1 }{ \bar{P}(\mathbf{x}_{pred}^{(t+1)} = \mathbf{x}^{(t+1)} | \mathbf{x}^{(t)}, ..., \mathbf{x}^{(1)}) } = \frac{ 1 }{ \sum_{j=1}^{|V|}{ y_{j}^{(t)} \hat{y}_{j}^{(t)} } }
+  \end{split}
+\end{equation*}
+
+i.e. the inverse probability of the correct word, according to the model distribution $\bar{P}$. Show how you can derive perplexity from the cross-entropy loss, and thus argue that minimizing the (arithmetic) mean cross-entropy loss will also minimize the (geometric) mean perplexity across the training set. For a vocabulary of $|V|$ words, what would you expect perplexity to be if your model predictions were completely random (chosen uniformly from the vocabulary)? Compute the corresponding cross-entropy loss for $|V| = 10000$.
+
+\textbf{Answer:}
+Given that $\mathbf{y}_{(t)}$ is a one-hot vector, i.e. $\sum_{i=1}^{|V|}y^{t}_{j} = 1$, we have:
+\begin{equation*}
+  \begin{split}
+    CE(\mathbf{y^{(t)}}, \mathbf{\hat{y}^{(t)}})
+    &= - \sum_{j=1}^{|V|}{ y_{j}^{(t)} log\hat{y}_{j}^{(t)} } \\
+    &= - log\hat{y}_{j}^{(t)} \\
+    &= log \frac{ 1 }{ \hat{y}_{j}^{(t)} } \\
+    &= log \frac{ 1 }{ \sum_{j=1}^{|V|}{ y_{j}^{(t)} \hat{y}_{j}^{(t)} } } \\
+    &= log PP^{(t)}(\mathbf{y}^{(t)}, \mathbf{\hat{y}}^{(t)})
+  \end{split}
+\end{equation*}
+Thus, the result of minimizing cross-entropy loss is the same as minimizing perplexity.
+
+For random predictions on vocabulary of size $|V|$, each word has probability of $\frac{1}{|V|}$, and thus the perplexity is $\frac{1}{\frac{1}{|V|}} = |V|$, and cross-entropy is $log(|V|)$. For $|V| = 10000$, we have $log(|V|) \approx 9.21$.
+
+
 
 \end{document}
 %%% Local Variables:
