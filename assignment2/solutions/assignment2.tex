@@ -148,9 +148,16 @@ Thus, the result of minimizing cross-entropy loss is the same as minimizing perp
 
 For random predictions on vocabulary of size $|V|$, each word has probability of $\frac{1}{|V|}$, and thus the perplexity is $\frac{1}{\frac{1}{|V|}} = |V|$, and cross-entropy is $log(|V|)$. For $|V| = 10000$, we have $log(|V|) \approx 9.21$.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth*2/3]{RNN.pdf}
 
+  \caption{The ``unrolled'' computational graph for three timesteps of a recursive neural network.}
+  \label{fig:rnn-computation-graph}
+\end{figure}
 
 \end{document}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
