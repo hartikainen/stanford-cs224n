@@ -37,7 +37,8 @@ class Config:
     n_word_features = 2 # Number of features for every word in the input.
     window_size = 1 # The size of the window to use.
     ### YOUR CODE HERE
-    n_window_features = 0 # The total number of features used for each window.
+    # The total number of features used for each window.
+    n_window_features = (2 * window_size + 1) * n_word_features
     ### END YOUR CODE
     n_classes = 5
     dropout = 0.5
@@ -142,7 +143,14 @@ class WindowModel(NERModel):
         (Don't change the variable names)
         """
         ### YOUR CODE HERE (~3-5 lines)
+        n_window_features = self.config.n_window_features
+        n_classes = self.config.n_classes
+        dropout = self.config.dropout
 
+        self.input_placeholder = tf.placeholder(tf.int32,
+                                                (None, n_window_features))
+        self.labels_placeholder = tf.placeholder(tf.int32, (None,))
+        self.dropout_placeholder = tf.placeholder(tf.float32, ())
         ### END YOUR CODE
 
     def create_feed_dict(self, inputs_batch, labels_batch=None, dropout=1):
@@ -165,6 +173,15 @@ class WindowModel(NERModel):
             feed_dict: The feed dictionary mapping from placeholders to values.
         """
         ### YOUR CODE HERE (~5-10 lines)
+        feed_dict = {
+            self.input_placeholder: inputs_batch,
+            self.dropout_placeholder: dropout
+        }
+
+        if labels_batch is not None:
+            feed_dict.update({
+                self.labels_placeholder: labels_batch
+            })
 
         ### END YOUR CODE
         return feed_dict
@@ -186,9 +203,13 @@ class WindowModel(NERModel):
             embeddings: tf.Tensor of shape (None, n_window_features*embed_size)
         """
         ### YOUR CODE HERE (!3-5 lines)
+        n_window_features = self.config.n_window_features
+        embed_size = self.config.embed_size
 
-
-
+        pretrained_embeddings = tf.Variable(self.pretrained_embeddings)
+        lookup = tf.nn.embedding_lookup(pretrained_embeddings,
+                                        self.input_placeholder)
+        embeddings = tf.reshape(lookup, (-1, n_window_features * embed_size))
         ### END YOUR CODE
         return embeddings
 
@@ -219,6 +240,27 @@ class WindowModel(NERModel):
         x = self.add_embedding()
         dropout_rate = self.dropout_placeholder
         ### YOUR CODE HERE (~10-20 lines)
+        xavier_initializer = tf.contrib.layers.xavier_initializer()
+
+        n_window_features = self.config.n_window_features
+        embed_size = self.config.embed_size
+        n_classes = self.config.n_classes
+        hidden_size = self.config.hidden_size
+
+        W_shape = (n_window_features * embed_size, hidden_size)
+        W = tf.Variable(xavier_initializer(W_shape))
+        b1 = tf.Variable(tf.zeros(hidden_size))
+
+        z = tf.matmul(x, W) + b1
+        h = tf.nn.relu(z)
+
+        h_drop = tf.nn.dropout(h, dropout_rate)
+
+        U_shape = (hidden_size, n_classes)
+        U = tf.Variable(xavier_initializer(U_shape))
+        b2 = tf.Variable(tf.zeros(n_classes))
+
+        pred = tf.matmul(h_drop, U) + b2
 
         ### END YOUR CODE
         return pred
@@ -237,7 +279,10 @@ class WindowModel(NERModel):
             loss: A 0-d tensor (scalar)
         """
         ### YOUR CODE HERE (~2-5 lines)
-
+        labels = self.labels_placeholder
+        cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
+            logits=pred, labels=labels)
+        loss = tf.reduce_mean(cross_entropy)
         ### END YOUR CODE
         return loss
 
@@ -261,12 +306,16 @@ class WindowModel(NERModel):
             train_op: The Op for training.
         """
         ### YOUR CODE HERE (~1-2 lines)
-
+        optimizer = tf.train.AdamOptimizer(self.config.lr)
+        train_op = optimizer.minimize(loss)
         ### END YOUR CODE
         return train_op
 
     def preprocess_sequence_data(self, examples):
-        return make_windowed_data(examples, start=self.helper.START, end=self.helper.END, window_size=self.config.window_size)
+        return make_windowed_data(examples,
+                                  start=self.helper.START,
+                                  end=self.helper.END,
+                                  window_size=self.config.window_size)
 
     def consolidate_predictions(self, examples_raw, examples, preds):
         """Batch the predictions into groups of sentence length.
