@@ -18,7 +18,7 @@ logger = logging.getLogger("hw3.q2.1")
 logger.setLevel(logging.DEBUG)
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-class RNNCell(tf.nn.rnn_cell.RNNCell):
+class RNNCell(tf.contrib.rnn.RNNCell):
     """Wrapper around our RNN cell implementation that allows us to play
     nicely with TensorFlow.
     """
@@ -58,13 +58,30 @@ class RNNCell(tf.nn.rnn_cell.RNNCell):
         """
         scope = scope or type(self).__name__
 
+        xavier_initializer = tf.contrib.layers.xavier_initializer()
         # It's always a good idea to scope variables in functions lest they
         # be defined elsewhere!
         with tf.variable_scope(scope):
             ### YOUR CODE HERE (~6-10 lines)
-            pass
+            W_x_shape = (self.input_size, self.state_size)
+            # W_x = tf.Variable(xavier_initializer(W_x_shape), name="W_x")
+            W_x = tf.get_variable("W_x", W_x_shape,
+                                  initializer=xavier_initializer)
+
+            W_h_shape = (self.state_size, self.state_size)
+            # W_h = tf.Variable(xavier_initializer(W_h_shape), name="W_h")
+            W_h = tf.get_variable("W_h", W_h_shape,
+                                  initializer=xavier_initializer)
+
+            # b = tf.Variable(tf.zeros(self.output_size), name="b")
+            b = tf.get_variable("b", self.output_size,
+                                initializer=tf.zeros)
+
+            new_state = tf.nn.sigmoid(tf.matmul(inputs, W_x)
+                                      + tf.matmul(state, W_h)
+                                      + b)
             ### END YOUR CODE ###
-        # For an RNN , the output and state are the same (N.B. this
+        # For an RNN, the output and state are the same (N.B. this
         # isn't true for an LSTM, though we aren't using one of those in
         # our assignment)
         output = new_state

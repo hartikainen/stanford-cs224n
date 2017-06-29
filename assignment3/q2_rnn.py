@@ -88,7 +88,7 @@ def pad_sequences(data, max_length):
             Manning is amazing" and labels "PER PER O O" would become
             ([[1,9], [2,9], [3,8], [4,8]], [1, 1, 4, 4]). Here "Chris"
             the word has been featurized as "[1, 9]", and "[1, 1, 4, 4]"
-            is the list of labels. 
+            is the list of labels.
         max_length: the desired length for all input/output sequences.
     Returns:
         a new list of data points of the structure (sentence', labels', mask).
@@ -103,7 +103,14 @@ def pad_sequences(data, max_length):
 
     for sentence, labels in data:
         ### YOUR CODE HERE (~4-6 lines)
-        pass
+        slen = min(max_length, len(sentence)) # sentence length
+        plen = max(max_length - slen, 0) # padding length
+
+        sentence_ = sentence[:slen] + [zero_vector] * plen
+        labels_ = labels[:slen] + [zero_label] * plen
+        mask = [True] * slen  + [False] * plen
+
+        ret.append((sentence_, labels_, mask))
         ### END YOUR CODE ###
     return ret
 
